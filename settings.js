@@ -2,6 +2,7 @@ var settings = new Settings();
 
 function Settings() {
     this.FPS = 30;
+    this.deltaT = 1000.0 / this.FPS;
 
     this.backgroundColor = new Color(0, 0, 0);
     this.inputPointsColor = new Color(255, 255, 255);
@@ -9,3 +10,11 @@ function Settings() {
     this.noiseXAxis = 10; //input point is a random number in that range around actual value
     this.noiseYAxis = 10; //input point is a random number in that range around actual value
 }
+
+var matrixA = math.matrix([
+    [1, 0, settings.deltaT, 0],
+    [0, 1, 0, settings.deltaT],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1]]);  // transition model
+
+var matrixB = math.eye(4); // control-input model

@@ -14,9 +14,10 @@ function Drawer()
     this.canvas = document.getElementById("kf_canvas");
     this.context = this.canvas.getContext("2d");
     this.noisePoints = new Array();
+    this.filter = new KalmanFilter();
 
     var that = this;
-    setTimeout(function(){that.update()}, 1000/settings.FPS);
+    setTimeout(function(){that.update()}, settings.deltaT);
 }
 
 Drawer.prototype.onMouseMove = function(event) {
@@ -25,6 +26,7 @@ Drawer.prototype.onMouseMove = function(event) {
     var y = event.clientY - rect.top;
     var newPoint = new NoisePoint(x, y);
     this.noisePoints.push(newPoint);
+    this.filter.addPoint(newPoint);
 }
 
 Drawer.prototype.update = function() {
@@ -35,14 +37,18 @@ Drawer.prototype.update = function() {
             that.noisePoints.splice(index, 1);
     });
 
-    setTimeout(function(){that.update()}, 1000/settings.FPS);
+    setTimeout(function(){that.update()}, settings.deltaT);
 }
 
-function Point() {}
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
 Point.prototype.update = function(context) {
     this.color = this.color.gradient(settings.backgroundColor, this.telomere);
     context.fillStyle = this.color.string();
-    context.fillRect(this.x, this.y, 1, 1);
+    context.fillRect(this.x, this.y, 2, 2);
     --this.telomere;
 }
 
