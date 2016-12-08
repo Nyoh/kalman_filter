@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <title>Kalman Filter</title>
     <link rel="shortcut icon" href="neiu.ico" type="image/vnd.microsoft.icon" />
+    <link rel="stylesheet" href="bootstrap.min.css">
     <script type="text/javascript" src="math.min.js"></script>
 </head>
 <body>
+<div class="container text-center">
+    <h1>Kalman Filter Simulation</h1>
 
+    <p><canvas id="kf_canvas" width="800" height="600" style="background: #000000" onmousemove="updatePosition(event);" >
+        Your browser does not support the HTML5 canvas tag.
+    </canvas></p>
+</div>
 </body>
 </html>
