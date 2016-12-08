@@ -38,21 +38,23 @@ Drawer.prototype.update = function() {
     setTimeout(function(){that.update()}, 1000/settings.FPS);
 }
 
-function NoisePoint(x, y)
-{
-    this.x = x;
-    this.y = y;
-    this.telomere = settings.noiseLifeTime * settings.FPS;
-    this.color = settings.noiseColor;
-}
-
-NoisePoint.prototype.update = function(context) {
+function Point() {}
+Point.prototype.update = function(context) {
     this.color = this.color.gradient(settings.backgroundColor, this.telomere);
     context.fillStyle = this.color.string();
     context.fillRect(this.x, this.y, 1, 1);
     --this.telomere;
 }
 
-NoisePoint.prototype.timeToDie = function() {
+Point.prototype.timeToDie = function() {
     return this.telomere < 1;
+}
+
+NoisePoint.prototype = new Point();
+function NoisePoint(x, y)
+{
+    this.x = Math.floor(Math.random() * settings.noiseXAxis * 2 - settings.noiseXAxis) + x;
+    this.y = Math.floor(Math.random() * settings.noiseYAxis * 2 - settings.noiseYAxis) + y;
+    this.telomere = settings.inputPointsLifeTime * settings.FPS;
+    this.color = settings.inputPointsColor;
 }
