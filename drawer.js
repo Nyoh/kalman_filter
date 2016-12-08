@@ -28,13 +28,13 @@ Drawer.prototype.onMouseMove = function(event) {
 }
 
 Drawer.prototype.update = function() {
+    var that = this;
     this.noisePoints.forEach(function(point, index) {
-        point.update(this.context);
+        point.update(that.context);
         if (point.timeToDie())
-            this.noisePoints.splice(index, 1);
+            that.noisePoints.splice(index, 1);
     });
 
-    var that = this;
     setTimeout(function(){that.update()}, 1000/settings.FPS);
 }
 
@@ -43,14 +43,16 @@ function NoisePoint(x, y)
     this.x = x;
     this.y = y;
     this.telomere = settings.noiseLifeTime * settings.FPS;
-    this.gradient = new Gradient(settings.noiseColor, settings.backgroundColor, this.telomere);
+    this.color = settings.noiseColor;
 }
 
 NoisePoint.prototype.update = function(context) {
-    context.fillStyle = this.gradient.color();
+    this.color = this.color.gradient(settings.backgroundColor, this.telomere);
+    context.fillStyle = this.color.string();
     context.fillRect(this.x, this.y, 1, 1);
+    --this.telomere;
 }
 
 NoisePoint.prototype.timeToDie = function() {
-    return this.telomere == 0;
+    return this.telomere < 1;
 }
