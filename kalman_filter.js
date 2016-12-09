@@ -1,22 +1,24 @@
 function KalmanFilter()
 {
-    this.currentX = math.matrix([[0], [0], [0], [0]]);
-    this.currentP = math.zeros(4, 4);
+    this.mu = math.matrix([[0], [0], [0], [0]]);
+    this.sigma = math.zeros(4, 4);
 }
 
 KalmanFilter.prototype.addPoint = function(point)
 {
-    this.prevX = this.currentX;
-    this.prevP = this.currentP;
+    this.prevMu = this.mu;
+    this.prevSigma = this.sigma;
 
     var control = math.zeros(4, 1); // we don't have control
-    // prediction
-    //var X = (matrixA.multiply(this.prevX)).add(matrixB.multiply(control));
-    //var P = ((matrixA.multiply(this.prevP)).multiply(matrixA.transpose())).add(Q);
 
+    // Predict
+    var mu = (matrixA.multiply(this.prevMu)).add(matrixB.multiply(control));
+    var sigma = ((matrixA.multiply(this.prevSigma)).multiply(matrixA.transpose())).add(matrixR);
 
-
-    //var measurement = math.matrix([cur_xPos, cur_yPos, velX, velY]);
+    // Update
+    var S = ((matrixC.multiply(sigma)).multiply(matrixC.transpose())).add(matrixQ);
+    var K = (sigma.multiply(matrixC.transpose())).multiply(S.inverse());
+    //var z = math.matrix([[point.x], [point.y], [point.x - math.subset(this.prevMu], [velY]]);
 
 
 
