@@ -13,8 +13,10 @@ function Drawer()
 {
     this.canvas = document.getElementById("kf_canvas");
     this.context = this.canvas.getContext("2d");
-    this.points = new Array();
+    this.noisePoints = new Array();
+    this.kalmanPoints = new Array();
     this.filter = new KalmanFilter();
+    this.lastMouseCoords = [0, 0];
 
     var that = this;
     setTimeout(function(){that.update()}, settings.deltaT);
@@ -24,18 +26,26 @@ Drawer.prototype.onMouseMove = function(event) {
     var rect = this.canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
-    var newPoint = new NoisePoint(x, y);
-    this.points.push(newPoint);
-    this.filter.addPoint(newPoint);
-    this.points.push(new KalmanPoint(x, y));
+    this.lastMouseCoords = [x, y];
 }
 
 Drawer.prototype.update = function() {
+    var noisePoint = new NoisePoint(this.lastMouseCoords[0], this.lastMouseCoords[1]);
+    this.noisePoints.push(noisePoint);
+    this.filter.addPoint(noisePoint);
+    this.kalmanPoints.push(this.filter.getPoint());
+
     var that = this;
-    this.points.forEach(function(point, index) {
+    this.noisePoints.forEach(function(point, index) {
         point.update(that.context);
         if (point.timeToDie())
-            that.points.splice(index, 1);
+            that.noisePoints.splice(index, 1);
+    });
+
+    this.kalmanPoints.forEach(function(point, index) {
+        point.update(that.context);
+        if (point.timeToDie())
+            that.kalmanPoints.splice(index, 1);
     });
 
     setTimeout(function(){that.update()}, settings.deltaT);
@@ -67,10 +77,22 @@ function NoisePoint(x, y)
 }
 
 KalmanPoint.prototype = new Point();
-function KalmanPoint(x, y)
+function KalmanPoint(x, y, prevX, prevY)
 {
     this.x = x;
     this.y = y;
+    this.prevX = prevX;
+    this.prevY = prevY;
     this.telomere = settings.kalmanPointsLifeTime * settings.FPS;
     this.color = settings.kalmanPointsColor;
+}
+
+KalmanPoint.prototype.update = function(context) {
+    this.color = this.color.gradient(settings.backgroundColor, this.telomere);
+    context.strokeStyle = this.color.string();
+    context.beginPath();
+    context.moveTo(this.prevX, this.prevY);
+    context.lineTo(this.x, this.y);
+    context.stroke();
+    --this.telomere;
 }

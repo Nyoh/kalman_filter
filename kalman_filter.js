@@ -26,6 +26,14 @@ KalmanFilter.prototype.addPoint = function(point)
 
     this.mu = math.add(mu, math.multiply(K, y));
     this.sigma = math.multiply(math.subtract(math.eye(4), math.multiply(K, matrixC)), sigma);
+}
 
+KalmanFilter.prototype.getPoint = function()
+{
+    var x = math.subset(this.mu, math.index(0, 0));
+    var y = math.subset(this.mu, math.index(1, 0));
+    var prevX = math.subset(this.prevMu, math.index(0, 0));
+    var prevY = math.subset(this.prevMu, math.index(1, 0));
 
+    return new KalmanPoint(x, y, prevX, prevY);
 }
