@@ -9,6 +9,9 @@ function Settings() {
     this.inputPointsLifeTime = 1.5; //seconds
     this.noiseXAxis = 10; //input point is a random number in that range around actual value
     this.noiseYAxis = 10; //input point is a random number in that range around actual value
+
+    this.kalmanPointsColor = new Color(100, 255, 100);
+    this.kalmanPointsLifeTime = 1.5; //seconds
 }
 
 var matrixA = math.matrix([

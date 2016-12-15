@@ -13,7 +13,7 @@ function Drawer()
 {
     this.canvas = document.getElementById("kf_canvas");
     this.context = this.canvas.getContext("2d");
-    this.noisePoints = new Array();
+    this.points = new Array();
     this.filter = new KalmanFilter();
 
     var that = this;
@@ -25,16 +25,17 @@ Drawer.prototype.onMouseMove = function(event) {
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
     var newPoint = new NoisePoint(x, y);
-    this.noisePoints.push(newPoint);
+    this.points.push(newPoint);
     this.filter.addPoint(newPoint);
+    this.points.push(new KalmanPoint(x, y));
 }
 
 Drawer.prototype.update = function() {
     var that = this;
-    this.noisePoints.forEach(function(point, index) {
+    this.points.forEach(function(point, index) {
         point.update(that.context);
         if (point.timeToDie())
-            that.noisePoints.splice(index, 1);
+            that.points.splice(index, 1);
     });
 
     setTimeout(function(){that.update()}, settings.deltaT);
@@ -63,4 +64,13 @@ function NoisePoint(x, y)
     this.y = Math.floor(Math.random() * settings.noiseYAxis * 2 - settings.noiseYAxis) + y;
     this.telomere = settings.inputPointsLifeTime * settings.FPS;
     this.color = settings.inputPointsColor;
+}
+
+KalmanPoint.prototype = new Point();
+function KalmanPoint(x, y)
+{
+    this.x = x;
+    this.y = y;
+    this.telomere = settings.kalmanPointsLifeTime * settings.FPS;
+    this.color = settings.kalmanPointsColor;
 }
