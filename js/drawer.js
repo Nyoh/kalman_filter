@@ -35,6 +35,9 @@ Drawer.prototype.update = function() {
     this.filter.addPoint(noisePoint);
     this.kalmanPoints.push(this.filter.getPoint());
 
+    // clear screen
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
     var that = this;
     this.noisePoints.forEach(function(point, index) {
         point.update(that.context);
@@ -70,8 +73,8 @@ Point.prototype.timeToDie = function() {
 NoisePoint.prototype = new Point();
 function NoisePoint(x, y)
 {
-    this.x = Math.floor(Math.random() * settings.noiseXAxis * 2 - settings.noiseXAxis) + x;
-    this.y = Math.floor(Math.random() * settings.noiseYAxis * 2 - settings.noiseYAxis) + y;
+    this.x = Math.floor(Math.random() * settings.noiseXAxis * 2 - settings.noiseXAxis + 1) + x;
+    this.y = Math.floor(Math.random() * settings.noiseYAxis * 2 - settings.noiseYAxis + 1) + y;
     this.telomere = settings.inputPointsLifeTime * settings.FPS;
     this.color = settings.inputPointsColor;
 }
